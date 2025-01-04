@@ -19,10 +19,12 @@
         } else {
             document.getElementById("theTime").innerHTML[2] = " ";
         }
+        console.log("colon");
     }
 
     var blinkTime = () => {
         document.getElementById("theTime").hidden = !document.getElementById("theTime").hidden;
+        console.log("full");
     }
 
     var addZero = (number) => {
@@ -45,7 +47,7 @@
                     let nsa = JSON.parse(html);
                     let timeString = `${addZero(Math.floor(nsa.time / 60))}:${addZero(nsa.time - Math.floor(nsa.time / 60)*60 )}`;
                     document.getElementById("theTime").innerHTML = timeString;
-  
+                    console.log(nsa.status);
                     if (nsa.status === 'stopped') {
                         document.getElementById("timerBox").style.backgroundColor = "rgb(62,217,74)";
                         document.getElementById("ghostTime").style.color = "rgb(45 163 55)";
