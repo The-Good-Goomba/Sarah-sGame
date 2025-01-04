@@ -2,7 +2,7 @@
     var updater;
 
     var start = () => {
-        document.getElementById("station").innerHTML = stationNumber;
+        document.getElementById("station").innerHTML = stationNum;
         updateTime();
         updater = setInterval(updateTime,1000);
         setTimeout(() => {
@@ -23,7 +23,7 @@
     var updateTime = () => {
         let bru = {
             command: "getStatus",
-            station: stationNumber
+            station: stationNum
         }
         fetch('/', {
                 method: 'POST',
@@ -58,7 +58,7 @@
                 }, body: JSON.stringify({
                     command: "submitCode", 
                     code: Number(document.getElementById("passwordBox").innerHTML), 
-                    station: stationNumber
+                    station: stationNum
                 })
             }).then(data => data.text())
                 .then(html => { 

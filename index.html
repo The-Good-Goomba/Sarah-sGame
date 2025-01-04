@@ -2,10 +2,10 @@
 <html>
 <head>
 	<script>
-        var stationNumber;
+        var stationNum;
 
         var joinTeam = () => {
-            stationNumber = Number(document.getElementById(stationNumber).value);
+            stationNumb = Number(document.getElementById("stationNumber").value);
             let body = {
                 command: "openTeamPage"
             }
@@ -51,7 +51,7 @@
 
     </style>
 </head>
-<body onload="begin()">
+<body>
     <div id="buttons">
         <input id="stationNumber" type="text">
         <input class="menuButton" type="button" value="Join Team" onclick="joinTeam()">
