@@ -4,9 +4,14 @@ const fs = require('fs');
 const port = 8041;
 
 const codes = [
-    123931,
-    938242,
-    128391,
+    1018,
+    9730,
+    1694,
+    8335,
+    2018,
+    3406,
+    1654,
+    9420
 ];
 
 var timerStartTime;
@@ -132,16 +137,33 @@ const server = http.createServer(async (request, response) => {
                         }
                     }, timerTime * 1000)
                 }
+            } else if (obj.command === "resetGame") {
+                timerStartTime = undefined;
+                teams = {
+                    1: {},
+                    2: {},
+                    3: {},
+                    4: {},
+                    5: {},
+                    6: {},
+                    7: {},
+                    8: {}
+                };
             } else if (obj.command === "getStatus") {
                 if (typeof teams[obj.teamNumber]?.name === 'undefined') {
                     response.setHeader('Content-Type', 'text/html');
                     response.end("teamInvalid");
                     return;
                 }
+                let sadfub;
+                if (typeof timerStartTime === 'undefined')
+                    sadfub = timerTime;
+                else 
+                    sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)
 
                 let uss = {
                     completionTime: teams[obj.teamNumber].completionTime,
-                    time: timerTime - (getSecondsSinceStart() - timerStartTime),
+                    time: sadfub,
                     name: teams[obj.teamNumber].name
                 }
                 response.setHeader('Content-Type', 'text/html');
@@ -153,7 +175,7 @@ const server = http.createServer(async (request, response) => {
                     return;
                 }
 
-                if (obj.code === codes[obj.teamNumber]) {
+                if (obj.code === codes[obj.teamNumber - 1]) {
                     if (typeof teams[obj.teamNumber].completionTime === 'undefined')
                         teams[obj.teamNumber].completionTime = timerTime - (getSecondsSinceStart() - timerStartTime);
                     response.setHeader('Content-Type', 'text/html');

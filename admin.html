@@ -20,6 +20,11 @@
                 }, body: JSON.stringify({ command: "getAllTimers"})
             });
         }
+
+        var resetGame = () => {
+
+        }
+
     </script>
 
     <style>
@@ -33,16 +38,16 @@
         src: url("/DSEG7Modern-BoldItalic.woff") format('woff');
         }
 
+        @font-face {
+        font-family: "PNSB";
+        src: url("/HelveticaNeueMedium.woff") format('woff');
+        }
+
     </style>
 </head>
 <body>
     <h1>Bomb Admin</h1>
     <input type="button" value="Start" onclick="startTimers()">
-    <div>
-        <div>
-            <div style="font-family: D7MBI;" hidden id="countDown">00:00</div>
-            <div style="font-family: D7MBI;">88:88</div>
-        </div>
-    </div>
+    <input type="button" value="Reset" onclick="resetGame()">
 </body>
 </html>
