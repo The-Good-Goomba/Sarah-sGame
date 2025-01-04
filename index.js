@@ -108,7 +108,7 @@ const server = http.createServer(async (request, response) => {
                         teams[x].status = 'ticking';
                         teams[x].setLoseTimer();
                     }
-                    
+
                     setTimeout(() => {
                         for (let x in teams) {
                             if (teams[x].status !== 'lost') {
@@ -117,7 +117,8 @@ const server = http.createServer(async (request, response) => {
                         }
                     }, 60 * 60 * 1000)
                 }
-        
+                response.setHeader('Content-Type', 'text/html');
+                response.end("Ok!");
             } else if (obj.command === "resetGame") {
                 teams = {
                     1: new Team(1018),
@@ -129,6 +130,8 @@ const server = http.createServer(async (request, response) => {
                     7: new Team(1654),
                     8: new Team(9420)
                 };
+                response.setHeader('Content-Type', 'text/html');
+                response.end("Ok!");
             } else if (obj.command === "getStatus") {
                 let sadfub;
                 if (teams[obj.station].status === 'ticking')
