@@ -130,11 +130,6 @@ const server = http.createServer(async (request, response) => {
                     8: new Team(9420)
                 };
             } else if (obj.command === "getStatus") {
-                if (typeof teams[obj.station]?.name === 'undefined') {
-                    response.setHeader('Content-Type', 'text/html');
-                    response.end("teamInvalid");
-                    return;
-                }
                 let sadfub;
                 if (teams[obj.station].status === 'ticking')
                     sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)  
@@ -143,7 +138,6 @@ const server = http.createServer(async (request, response) => {
 
                 let uss = {
                     time: sadfub,
-                    name: teams[obj.station].name,
                     status: teams[obj.station].status
                 }
                 response.setHeader('Content-Type', 'text/html');

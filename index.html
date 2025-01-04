@@ -5,7 +5,12 @@
         var stationNum;
 
         var joinTeam = () => {
-            stationNumb = Number(document.getElementById("stationNumber").value);
+            stationNum = Number(document.getElementById("stationNumber").value);
+            if (![1,2,3,4,5,6,7,8].includes(stationNum)) {
+                alert("Not a valid team number!")
+                return;
+            }
+
             let body = {
                 command: "openTeamPage"
             }
@@ -54,7 +59,7 @@
         .menuButton {
             width: 80vw;
             font-size: 7vw;
-            margin: 5vw;
+            margin: auto;
         }
 
         #buttons {
@@ -62,11 +67,17 @@
             flex-direction: column;
         }
 
+        #stationNumber {
+            font-family: D7MI;
+            width: 80vw;
+            aspect-ratio: 3/4;
+        }
+
     </style>
 </head>
 <body>
     <div id="buttons">
-        <input id="stationNumber" type="text" style="font-family: D7MI;">
+        <input id="stationNumber" type="text">
         <input class="menuButton" type="button" value="Enter Station" onclick="joinTeam()">
     </div>
 </body>
