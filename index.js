@@ -129,14 +129,14 @@ const server = http.createServer(async (request, response) => {
                 };
             } else if (obj.command === "getStatus") {
                 let sadfub;
-                if (teams[obj.station - 1].status === 'ticking')
+                if (teams[obj.station].status === 'ticking')
                     sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)  
                 else
                     sadfub = timerTime;
 
                 let uss = {
                     time: sadfub,
-                    status: teams[obj.station - 1].status
+                    status: teams[obj.station].status
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end(JSON.stringify(uss));
@@ -147,7 +147,7 @@ const server = http.createServer(async (request, response) => {
                     return;
                 }
 
-                if (obj.code === codes[obj.station - 1]) {
+                if (obj.code === teams[obj.station].code) {
                     if (teams[obj.station].status === 'ticking'){
                         teams[obj.station].timerTime = teams[obj.station].timerTime - (getSecondsSinceStart() - teams[obj.station].timerStartTime);
                         teams[obj.station].status = 'stopped';
