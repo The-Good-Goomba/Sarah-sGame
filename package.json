@@ -1,0 +1,19 @@
+{
+  "name": "sarahsgame",
+  "version": "1.0.0",
+  "description": "The game Sarah wanted me to make",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-Good-Goomba/Sarah-sGame.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/The-Good-Goomba/Sarah-sGame/issues"
+  },
+  "homepage": "https://github.com/The-Good-Goomba/Sarah-sGame#readme"
+}
