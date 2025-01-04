@@ -1,11 +1,6 @@
 const http = require('http');
 const fs = require('fs');
-const os = require('os');
-const { json } = require('stream/consumers');
 
-// const hostname = os.networkInterfaces().en0[1].address;
-const hostname = '127.0.0.1';
-// const hostname = '0.0.0.0';
 const port = 8041;
 
 const codes = [
