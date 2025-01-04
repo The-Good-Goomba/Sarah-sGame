@@ -64,7 +64,7 @@
             if (!document.cookie.includes("teamNumber="))
                 return;
             let butt = document.getElementById("buttons");
-            butt.innerHTML += `<input type="button" value="Rejoin team" onclick="rejoinTeam()">`;
+            butt.innerHTML += `<input class="menuButton" type="button" value="Rejoin team" onclick="rejoinTeam()">`;
         
         }
 
@@ -90,6 +90,12 @@
         .menuButton {
             width: 80vw;
             font-size: 7vw;
+            margin: 5vw;
+        }
+
+        #buttons {
+            display: flex;
+            flex-direction: column;
         }
 
     </style>
