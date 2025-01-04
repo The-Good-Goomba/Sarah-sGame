@@ -20,6 +20,19 @@
                 });
         }
 
+        var replaceInnards = (html) => {
+            let sussyBaka = document.getElementById("extraScript");
+            if (sussyBaka) { sussyBaka.remove(); }
+            theStuff = html;
+            let scribt = document.createElement("script");
+            scribt.setAttribute("id","extraScript");
+            scribt.innerHTML = html.slice(html.indexOf(">",1)+1,html.indexOf("\x3C/script",1));
+            let hotBod = document.getElementsByTagName("body")[0];
+            hotBod.innerHTML = html.slice(html.indexOf("<style>"));
+            hotBod.appendChild(scribt);
+            start?.();
+        }
+
     </script>
 
     <style>
@@ -53,8 +66,8 @@
 </head>
 <body>
     <div id="buttons">
-        <input id="stationNumber" type="text">
-        <input class="menuButton" type="button" value="Join Team" onclick="joinTeam()">
+        <input id="stationNumber" type="text" style="font-family: D7MI;">
+        <input class="menuButton" type="button" value="Enter Station" onclick="joinTeam()">
     </div>
 </body>
 </html>
