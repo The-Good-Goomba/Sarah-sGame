@@ -87,12 +87,17 @@
         src: url("/HelveticaNeueMedium.woff") format('woff');
         }
 
+        .menuButton {
+            width: 80vw;
+            font-size: 7vw;
+        }
+
     </style>
 </head>
 <body onload="begin()">
     <div id="buttons">
-        <input type="button" value="Create Team" onclick="createTeam()">
-        <input type="button" value="Join Team" onclick="joinTeam()">
+        <input class="menuButton" type="button" value="Create Team" onclick="createTeam()">
+        <input class="menuButton" type="button" value="Join Team" onclick="joinTeam()">
     </div>
 </body>
 </html>
