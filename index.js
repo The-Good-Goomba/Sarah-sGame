@@ -104,9 +104,11 @@ const server = http.createServer(async (request, response) => {
                 {
                     for (let x in teams) {
                         teams[x].timerStartTime = getSecondsSinceStart();
+                        teams[x].timerTime = timerLength;
                         teams[x].status = 'ticking';
                         teams[x].setLoseTimer();
                     }
+                    
                     setTimeout(() => {
                         for (let x in teams) {
                             if (teams[x].status !== 'lost') {
