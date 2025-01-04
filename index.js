@@ -174,6 +174,6 @@ let sendError = (response) => {
     response.end("Uh Oh, Stinky! No page found.");
 }
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(port, () => {
+    console.log(`Server listening on ${port} | http://localhost:${port}`);
 });
