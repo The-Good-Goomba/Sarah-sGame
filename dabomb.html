@@ -2,7 +2,7 @@
     var updater;
 
     var start = () => {
-        document.getElementById("teamNumber").innerHTML = document.cookie.slice(document.cookie.indexOf("teamNumber=") + 11, document.cookie.indexOf("teamNumber=") + 12);
+        document.getElementById("station").innerHTML = stationNumber;
         updateTime();
         updater = setInterval(updateTime,1000);
         setTimeout(() => {
@@ -23,7 +23,7 @@
     var updateTime = () => {
         let bru = {
             command: "getStatus",
-            teamNumber: document.cookie.slice(document.cookie.indexOf("teamNumber=") + 11, document.cookie.indexOf("teamNumber=") + 12)
+            station: stationNumber
         }
         fetch('/', {
                 method: 'POST',
@@ -32,15 +32,7 @@
                 }, body: JSON.stringify(bru)
             }).then(data => data.text())
                 .then(html => { 
-                    if (html === "teamInvalid") {
-                        alert("Team has not yet been made");
-                        document.cookie = `teamNumber=; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/;`;
-                        clearInterval(updater);
-                        location.reload();
-                        return;
-                    }
                     let nsa = JSON.parse(html);
-                    document.getElementById("teamName").innerHTML = nsa.name;
                     let timeString;
                     if (typeof nsa.completionTime === 'undefined')
                         timeString = `${addZero(Math.floor(nsa.time / 60))}:${addZero(nsa.time - Math.floor(nsa.time / 60)*60 )}`;
@@ -66,11 +58,12 @@
                 }, body: JSON.stringify({
                     command: "submitCode", 
                     code: Number(document.getElementById("passwordBox").innerHTML), 
-                    teamNumber: document.cookie.slice(document.cookie.indexOf("teamNumber=") + 11, document.cookie.indexOf("teamNumber=") + 12)
+                    station: stationNumber
                 })
             }).then(data => data.text())
                 .then(html => { 
                     alert(html);
+                    document.getElementById("passwordBox").innerHTML = '';
                 })
             return;
         }
@@ -103,14 +96,14 @@
 
 <div id="contentBox" style="display: flex; flex-direction: column; margin:auto;">
     <div style="display: flex; flex-direction: row; width: 100%;">
-        <h2 id="teamName" style="text-align: left; width:90%; font-family: PNSB; overflow: hidden;">Name</h2>
-        <h2 id="teamNumber" style="text-align: right; width:10%; font-family: PNSB;">No.</h2>
+        <h2 style="text-align: left; width:90%; font-family: PNSB; overflow: hidden;">Station</h2>
+        <h2 id="station" style="text-align: right; width:10%; font-family: PNSB;">No.</h2>
     </div>
     <div id="timerBox" style="position:relative; background-color: rgb(169, 27, 27); padding: 10px; width: fit-content; border-radius: 10px; border: 2px solid #000000;">
         <div class="timerTime" id="ghostTime" style="color: rgb(132, 20, 20);position: absolute;">88:88</div>
         <div class="timerTime" id="theTime" style="color: rgb(0, 0, 0);position: relative;">15:00</div>
     </div>
-    <div id="passwordBox" style="background-color: #B8B500; padding: 10px; border-radius: 10px; border: 2px solid #000000; margin-top: 10px; font-family: PNSB; font-size: 7vw; aspect-ratio: 7;">
+    <div id="passwordBox" style="background-color: #B8B500; padding: 10px; border-radius: 10px; border: 2px solid #000000; margin-top: 10px; font-family: D7MI; font-size: 7vw; aspect-ratio: 7; text-align: right;">
 
     </div>
     <div id="keypad" style="display: flex; flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: space-around;">

@@ -14,18 +14,35 @@ const codes = [
     9420
 ];
 
-var timerStartTime;
+var gameStarted = false;
 var timerTime = 20;
 
+class Team {
+    constructor(code) {
+        this.timerLength = timerTime;
+        this.status = 'stopped';
+        this.timeout;
+        this.code = code;
+    }
+
+    setLoseTimer = () => {
+        clearInterval(this.timeout);
+        this.timeout = setInterval(() => {
+            this.status = 'lost';
+            this.timerTime = 0;
+        }, this.timerTime)
+    }
+}
+
 var teams = {
-    1: {},
-    2: {},
-    3: {},
-    4: {},
-    5: {},
-    6: {},
-    7: {},
-    8: {}
+    1: new Team(1018),
+    2: new Team(9730),
+    3: new Team(1694),
+    4: new Team(8335),
+    5: new Team(2018),
+    6: new Team(3406),
+    7: new Team(1654),
+    8: new Team(9420)
 };
 
 var getSecondsSinceStart = () => {
@@ -82,102 +99,76 @@ const server = http.createServer(async (request, response) => {
             if (obj.command === "openTeamPage") {
                 response.setHeader('Content-Type', 'text/html');
                 fs.createReadStream(__dirname + '/dabomb.html').pipe(response);
-            } else if (obj.command === "openCreateTeam") {
-                response.setHeader('Content-Type', 'text/html');
-                fs.createReadStream(__dirname + '/createTeam.html').pipe(response);
-            } else if (obj.command === "openJoinTeam") {
-                response.setHeader('Content-Type', 'text/html');
-                fs.createReadStream(__dirname + '/joinTeam.html').pipe(response);
-            } else if (obj.command === "createTeam") {
-                
-                if (obj.teamNumber > 8 || obj.teamNumber < 1) {
-                    response.writeHead(200, {'Content-Type': 'text/html'})
-                    response.end('teamNumberInvalid');
-                    return;
-                } 
-                if (teams[obj.teamNumber].taken) {
-                    response.writeHead(200, {'Content-Type': 'text/html'})
-                    response.end('teamMade');
-                    return;
-                } 
-                if (obj.teamName.length > 10) {
-                    response.writeHead(200, {'Content-Type': 'text/html'})
-                    response.end('tooLong');
-                    return;
-                }
-
-                for (let x in teams) {
-                    if (teams[x].name == obj.teamName) {
-                        response.writeHead(200, {'Content-Type': 'text/html'})
-                        response.end('teamNameTaken');
-                        console.log("here2");
-                        return;
-                    }
-                }
-
-                teams[obj.teamNumber].taken = true;
-                teams[obj.teamNumber].name = obj.teamName;
-                response.setHeader('Content-Type', 'text/html');
-                fs.createReadStream(__dirname + '/dabomb.html').pipe(response);    
-            } else if (obj.command === "isTeamMade") {
-                let sus = "No";
-                if (teams[obj.teamNumber].taken) sus = "Yes";
-                response.setHeader('Content-Type', 'text/html');
-                response.end(sus)
             } else if (obj.command === "startTimers") {
-                if (!timerStartTime) { 
-                    console.log("Starting timer");
-                    timerStartTime = getSecondsSinceStart(); 
+                if (!gameStarted)
+                {
+                    for (let x in teams) {
+                        if (typeof teams[x].stopTime === 'undefined') {
+                            teams[x].timerStartTime = getSecondsSinceStart();
+                            teams[x].status = 'ticking';
+                            teams[x].setLoseTimer();
+                        }
+                    }
                     setTimeout(() => {
-                        console.log("Starting timer");
                         for (let x in teams) {
-                            if (typeof teams[x].completionTime === 'undefined') {
-                                teams[x].completionTime = 0;
+                            if (teams[x].status !== 'lost') {
+                                teams[x].status = 'stopped';
                             }
                         }
-                    }, timerTime * 1000)
+                    }, 60 * 60 * 1000)
                 }
+        
             } else if (obj.command === "resetGame") {
-                timerStartTime = undefined;
                 teams = {
-                    1: {},
-                    2: {},
-                    3: {},
-                    4: {},
-                    5: {},
-                    6: {},
-                    7: {},
-                    8: {}
+                    1: new Team(1018),
+                    2: new Team(9730),
+                    3: new Team(1694),
+                    4: new Team(8335),
+                    5: new Team(2018),
+                    6: new Team(3406),
+                    7: new Team(1654),
+                    8: new Team(9420)
                 };
             } else if (obj.command === "getStatus") {
-                if (typeof teams[obj.teamNumber]?.name === 'undefined') {
+                if (typeof teams[obj.station]?.name === 'undefined') {
                     response.setHeader('Content-Type', 'text/html');
                     response.end("teamInvalid");
                     return;
                 }
                 let sadfub;
-                if (typeof timerStartTime === 'undefined')
+                if (teams[obj.station].status === 'ticking')
+                    sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)  
+                else
                     sadfub = timerTime;
-                else 
-                    sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)
 
                 let uss = {
-                    completionTime: teams[obj.teamNumber].completionTime,
                     time: sadfub,
-                    name: teams[obj.teamNumber].name
+                    name: teams[obj.station].name,
+                    status: teams[obj.station].status
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end(JSON.stringify(uss));
             } else if (obj.command === "submitCode") {
-                if (typeof teams[obj.teamNumber]?.name === 'undefined') {
+                if (typeof teams[obj.station]?.name === 'undefined') {
                     response.setHeader('Content-Type', 'text/html');
-                    response.end("teamInvalid");
+                    response.end("Team invalid!");
                     return;
                 }
 
-                if (obj.code === codes[obj.teamNumber - 1]) {
-                    if (typeof teams[obj.teamNumber].completionTime === 'undefined')
-                        teams[obj.teamNumber].completionTime = timerTime - (getSecondsSinceStart() - timerStartTime);
+                if (!gameStarted) {
+                    response.setHeader('Content-Type', 'text/html');
+                    response.end("The game has not started");
+                    return;
+                }
+
+                if (obj.code === codes[obj.station - 1]) {
+                    if (teams[obj.station].status === 'ticking'){
+                        teams[obj.station].timerTime = teams[obj.station].timerTime - (getSecondsSinceStart() - teams[obj.station].timerStartTime);
+                        teams[obj.station].status = 'stopped';
+                    } else if (teams[obj.station].status === 'stopped') {
+                        teams[obj.station].timerStartTime = getSecondsSinceStart();
+                        teams[obj.station].status = 'ticking';
+                    }
                     response.setHeader('Content-Type', 'text/html');
                     response.end("Success!");
                 } else {

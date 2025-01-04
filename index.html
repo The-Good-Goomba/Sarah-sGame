@@ -2,20 +2,10 @@
 <html>
 <head>
 	<script>
-        var replaceInnards = (html) => {
-            let sussyBaka = document.getElementById("extraScript");
-            if (sussyBaka) { sussyBaka.remove(); }
-            theStuff = html;
-            let scribt = document.createElement("script");
-            scribt.setAttribute("id","extraScript");
-            scribt.innerHTML = html.slice(html.indexOf(">",1)+1,html.indexOf("\x3C/script",1));
-            let hotBod = document.getElementsByTagName("body")[0];
-            hotBod.innerHTML = html.slice(html.indexOf("<style>"));
-            hotBod.appendChild(scribt);
-            start?.();
-        }
+        var stationNumber;
 
-        var rejoinTeam = () => {
+        var joinTeam = () => {
+            stationNumber = Number(document.getElementById(stationNumber).value);
             let body = {
                 command: "openTeamPage"
             }
@@ -29,45 +19,6 @@
                     replaceInnards(html);
                 });
         }
-
-        var createTeam = () => {
-            let body = {
-                command: "openCreateTeam"
-            }
-            fetch('/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify(body)
-            }).then(data => data.text())
-                .then(html => { 
-                    replaceInnards(html);
-                });
-        }
-
-        var joinTeam = () => {
-            let body = {
-                command: "openJoinTeam"
-            }
-            fetch('/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify(body)
-            }).then(data => data.text())
-                .then(html => { 
-                    replaceInnards(html);
-                });
-        }
-
-        var begin = () => {
-            if (!document.cookie.includes("teamNumber="))
-                return;
-            let butt = document.getElementById("buttons");
-            butt.innerHTML += `<input class="menuButton" type="button" value="Rejoin team" onclick="rejoinTeam()">`;
-        
-        }
-
 
     </script>
 
@@ -102,7 +53,7 @@
 </head>
 <body onload="begin()">
     <div id="buttons">
-        <input class="menuButton" type="button" value="Create Team" onclick="createTeam()">
+        <input id="stationNumber" type="text">
         <input class="menuButton" type="button" value="Join Team" onclick="joinTeam()">
     </div>
 </body>
