@@ -1,0 +1,49 @@
+<script>
+    var ubsdaif = () => {
+        if (isNaN(skibidi.value)) { alert("Please enter a number"); return; }
+
+        let bruh = Number(skibidi.value);
+
+        if (!(bruh > 0 && bruh < 9)) { alert("Please enter a number between 1 & 8"); return; }
+        
+        if((bruh * 10.0) % 10 != 0 ) { alert("Please enter a whole number"); return; }
+    
+        fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }, body: JSON.stringify({command: "isTeamMade", teamNumber: bruh})
+        }).then(data => data.text())
+            .then(html => { 
+                if (html !== "Yes") { alert("Team has not yet been created"); return; }
+
+                let d = new Date();
+                d.setTime(d.getTime() + 86400000);
+                document.cookie = `teamNumber=${bruh}; expires=${d.toUTCString()}; path=/;`;
+
+                let body = {
+                    command: "openTeamPage"
+                }
+
+                fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, body: JSON.stringify(body)
+                }).then(data => data.text())
+                    .then(html => { 
+                        replaceInnards(html);
+                    });
+                
+            });   
+
+        } 
+    
+</script>
+<style>
+
+</style>
+<div>
+    <input type="text" id="skibidi">
+    <input type="button" value="submit" onclick="ubsdaif()">
+</div>

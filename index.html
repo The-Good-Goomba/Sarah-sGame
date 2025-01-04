@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script>
+        var replaceInnards = (html) => {
+            let sussyBaka = document.getElementById("extraScript");
+            if (sussyBaka) { sussyBaka.remove(); }
+            theStuff = html;
+            let scribt = document.createElement("script");
+            scribt.setAttribute("id","extraScript");
+            scribt.innerHTML = html.slice(html.indexOf(">",1)+1,html.indexOf("\x3C/script",1));
+            let hotBod = document.getElementsByTagName("body")[0];
+            hotBod.innerHTML = html.slice(html.indexOf("<style>"));
+            hotBod.appendChild(scribt);
+            start?.();
+        }
+
+        var rejoinTeam = () => {
+            let body = {
+                command: "openTeamPage"
+            }
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify(body)
+            }).then(data => data.text())
+                .then(html => { 
+                    replaceInnards(html);
+                });
+        }
+
+        var createTeam = () => {
+            let body = {
+                command: "openCreateTeam"
+            }
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify(body)
+            }).then(data => data.text())
+                .then(html => { 
+                    replaceInnards(html);
+                });
+        }
+
+        var joinTeam = () => {
+            let body = {
+                command: "openJoinTeam"
+            }
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify(body)
+            }).then(data => data.text())
+                .then(html => { 
+                    replaceInnards(html);
+                });
+        }
+
+        var begin = () => {
+            if (!document.cookie.includes("teamNumber="))
+                return;
+            let butt = document.getElementById("buttons");
+            butt.innerHTML += `<input type="button" value="Rejoin team" onclick="rejoinTeam()">`;
+        
+        }
+
+
+    </script>
+
+    <style>
+        @font-face {
+        font-family: "D7MI";
+        src: url("/DSEG7Modern-Italic.woff") format('woff');
+        }
+
+        @font-face {
+        font-family: "D7MBI";
+        src: url("/DSEG7Modern-BoldItalic.woff") format('woff');
+        }
+
+        @font-face {
+        font-family: "D14MI";
+        src: url("/DSEG14Modern-Italic.woff") format('woff');
+        }
+
+    </style>
+</head>
+<body onload="begin()">
+    <div id="buttons">
+        <input type="button" value="Create Team" onclick="createTeam()">
+        <input type="button" value="Join Team" onclick="joinTeam()">
+    </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<script>
+    var submit = () => {
+        let body = {
+            command: "createTeam",
+            teamNumber: Number(teamNum.value),
+            teamName: teamName.value
+        }
+        fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify(body)
+            }).then(data => data.text())
+                .then(html => { 
+                    let d = new Date();
+                    console.log(html);
+                    if (html === "teamMade") 
+                        alert("Team already created");
+                    else if (html === "teamNameTaken") 
+                        alert("Team name taken");
+                    else if (html === "teamNumberInvalid")
+                        alert("Not a valid team number!");
+                    else if (html === "tooLong")
+                        alert("Team name is too long (>10)");
+                    else {
+                        d.setTime(d.getTime() + 86400000);
+                        document.cookie = `teamNumber=${teamNum.value}; expires=${d.toUTCString()}; path=/`;
+                        console.log(document.cookie);
+                        replaceInnards(html); 
+                    }
+                });
+    }
+</script>
+<style>
+
+</style>
+
+
+<div>
+    <input type="text" id="teamNum">
+    <input type="text" id="teamName">
+    <input type="button" value="Submit" onclick="submit()">
+</div>
