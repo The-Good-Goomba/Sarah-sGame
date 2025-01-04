@@ -8,6 +8,7 @@
         setTimeout(() => {
             document.getElementById("contentBox").style.width = `${document.getElementById("timerBox").getBoundingClientRect().width}px`;
         },100);
+        addEventListener("resize", (event) => { document.getElementById("contentBox").style.width = `${document.getElementById("timerBox").getBoundingClientRect().width}px`; });
     }
 
     var blinkColon = () => {
@@ -96,7 +97,7 @@
         aspect-ratio: 2;
         margin-top: 5px;
         font-family: PNSB;
-        font-size: 1.5rem;
+        font-size: 7vw;
     }
 </style>
 
