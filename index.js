@@ -15,7 +15,7 @@ const codes = [
 ];
 
 var gameStarted = false;
-var timerTime = 20;
+var timerTime = 20; // In seconds
 
 class Team {
     constructor(code) {
@@ -103,11 +103,9 @@ const server = http.createServer(async (request, response) => {
                 if (!gameStarted)
                 {
                     for (let x in teams) {
-                        if (typeof teams[x].stopTime === 'undefined') {
-                            teams[x].timerStartTime = getSecondsSinceStart();
-                            teams[x].status = 'ticking';
-                            teams[x].setLoseTimer();
-                        }
+                        teams[x].timerStartTime = getSecondsSinceStart();
+                        teams[x].status = 'ticking';
+                        teams[x].setLoseTimer();
                     }
                     setTimeout(() => {
                         for (let x in teams) {
@@ -131,24 +129,18 @@ const server = http.createServer(async (request, response) => {
                 };
             } else if (obj.command === "getStatus") {
                 let sadfub;
-                if (teams[obj.station].status === 'ticking')
+                if (teams[obj.station - 1].status === 'ticking')
                     sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)  
                 else
                     sadfub = timerTime;
 
                 let uss = {
                     time: sadfub,
-                    status: teams[obj.station].status
+                    status: teams[obj.station - 1].status
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end(JSON.stringify(uss));
             } else if (obj.command === "submitCode") {
-                if (typeof teams[obj.station]?.name === 'undefined') {
-                    response.setHeader('Content-Type', 'text/html');
-                    response.end("Team invalid!");
-                    return;
-                }
-
                 if (!gameStarted) {
                     response.setHeader('Content-Type', 'text/html');
                     response.end("The game has not started");
