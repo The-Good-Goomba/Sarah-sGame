@@ -15,7 +15,8 @@ const codes = [
 ];
 
 var gameStarted = false;
-var timerTime = 20; // In seconds
+var timerTime = 15 * 60; // In seconds
+var gameEnd;
 
 class Station {
     constructor(code) {
@@ -109,7 +110,7 @@ const server = http.createServer(async (request, response) => {
                         stations[x].setLoseTimer();
                     }
                     gameStarted = true;
-                    setTimeout(() => {
+                    gameEnd = setTimeout(() => {
                         for (let x in stations) {
                             if (stations[x].status !== 'lost') {
                                 stations[x].status = 'stopped';
@@ -131,6 +132,7 @@ const server = http.createServer(async (request, response) => {
                     8: new Station(9420)
                 };
                 gameStarted = false;
+                clearTimeout(gameEnd);
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
             } else if (obj.command === "getStatus") {
