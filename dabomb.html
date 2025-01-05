@@ -15,16 +15,14 @@
 
     var blinkColon = () => {
         if (document.getElementById("theTime").innerHTML[2] === " ") {
-            document.getElementById("theTime").innerHTML[2] = ":";
+            document.getElementById("theTime").innerHTML = document.getElementById("theTime").innerHTML.replace(" ",":");
         } else {
-            document.getElementById("theTime").innerHTML[2] = " ";
+            document.getElementById("theTime").innerHTML = document.getElementById("theTime").innerHTML.replace(":"," ");
         }
-        console.log("colon");
     }
 
     var blinkTime = () => {
         document.getElementById("theTime").hidden = !document.getElementById("theTime").hidden;
-        console.log("full");
     }
 
     var addZero = (number) => {
@@ -49,26 +47,25 @@
                     document.getElementById("theTime").innerHTML = timeString;
                     clearInterval(fullBlinker);
                     clearInterval(colonBlinker);
+                    document.getElementById("theTime").hidden = false;
+
 
                     if (nsa.status === 'stopped') {
                         document.getElementById("timerBox").style.backgroundColor = "rgb(62,217,74)";
                         document.getElementById("ghostTime").style.color = "rgb(45 163 55)";
-                        clearInterval(colonBlinker);
                         return;
                     } 
                     
                     if (nsa.status === 'ticking') {
-                        document.getElementById("timerBox").style.backgroundColor = "rgb(169, 27, 27);";
+                        document.getElementById("timerBox").style.backgroundColor = "rgb(169, 27, 27)";
                         document.getElementById("ghostTime").style.color = "rgb(132, 20, 20)";
                         colonBlinker = setInterval(blinkColon, 500);
                         return;
                     }
 
                     if (nsa.status === 'lost') {
-                        
-                        document.getElementById("timerBox").style.backgroundColor = "rgb(169, 27, 27);";
+                        document.getElementById("timerBox").style.backgroundColor = "rgb(169, 27, 27)";
                         document.getElementById("ghostTime").style.color = "rgb(132, 20, 20)";
-                        
                         fullBlinker = setInterval(blinkTime, 500);
                         return;
                     }

@@ -2,6 +2,33 @@
 <html>
 <head>
 	<script>
+
+        var stationStates;
+
+        var start = () => 
+        {
+            for (let i = 1; i < 9; i++) 
+            {
+                document.getElementById("timers").innerHTML += `
+                <div style="display: flex; flex-direction: row; width: 100%;">
+                    <h2 style="text-align: left; width:90%; font-family: PNSB; overflow: hidden;">Station</h2>
+                    <h2 id="station" style="text-align: right; width:10%; font-family: PNSB;">${i}</h2>
+                </div>
+                <div class="timerBox" style="position:relative; background-color: rgb(169, 27, 27); padding: 10px; width: fit-content; border-radius: 10px; border: 2px solid #000000;">
+                    <div class="timerTime theTime" style="color: rgb(0, 0, 0);position: absolute; z-index: 2;">15:00</div>
+                    <div class="timerTime ghostTime" style="color: rgb(132, 20, 20);position: relative; z-index: 1;">88:88</div>
+                </div>
+                `;
+            }
+
+            setInterval(blink, 500);
+            setInterval(fetchCurrentTimes, 1000);
+
+            setTimeout(() => {
+                document.getElementById("contentBox").style.width = `${document.getElementsByClassName("timerBox")[0].getBoundingClientRect().width}px`;
+            },100);
+            addEventListener("resize", (event) => { document.getElementById("contentBox").style.width = `${document.getElementsByClassName("timerBox")[0].getBoundingClientRect().width}px`; });
+        }
         
 		var startTimers = () => {
             fetch('/', {
@@ -12,17 +39,59 @@
             });
         }
 
+        var addZero = (number) => {
+            if (number < 10) return "0" + number;
+            return number;
+        }
+
         var fetchCurrentTimes = () => {
             fetch('/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 }, body: JSON.stringify({ command: "getAllTimers"})
-            });
+            }).then(data => data.text())
+                .then(html => { 
+                    stationStates = JSON.parse(html);
+                    for (let i = 0; i < 8; i++) {
+                        document.getElementsByClassName("theTime")[i].innerHTML = `${addZero(Math.floor(stationStates[i].time / 60))}:${addZero(stationStates[i].time - Math.floor(stationStates[i].time / 60)*60 )}`;
+
+                        if (stationStates[i].status === 'stopped') {
+                            document.getElementsByClassName("timerBox")[i].style.backgroundColor = "rgb(62,217,74)";
+                            document.getElementsByClassName("ghostTime")[i].style.color = "rgb(45 163 55)";
+                        } else {
+                            document.getElementsByClassName("timerBox")[i].style.backgroundColor = "rgb(169, 27, 27)";
+                            document.getElementsByClassName("ghostTime")[i].style.color = "rgb(132, 20, 20)";
+                        }
+                    }
+
+                });
+        }
+
+        var blink = () => {
+            if (typeof stationStates === 'undefined') return;
+
+            for (let i = 0; i < 8; i++) {
+                if (stationStates[i].status === 'ticking') {
+                    if (document.getElementsByClassName("theTime")[i].innerHTML[2] === " ") {
+                        document.getElementsByClassName("theTime")[i].innerHTML = document.getElementsByClassName("theTime")[i].innerHTML.replace(" ",":");
+                    } else {
+                        document.getElementsByClassName("theTime")[i].innerHTML = document.getElementsByClassName("theTime")[i].innerHTML.replace(":"," ");
+                    }
+                } else if (stationStates[i].status === 'lost') {
+                    console.log("im working");
+                    document.getElementsByClassName("theTime")[i].hidden = !document.getElementsByClassName("theTime")[i].hidden;
+                }
+            }
         }
 
         var resetGame = () => {
-
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify({ command: "resetGame"})
+            });
         }
 
     </script>
@@ -43,11 +112,27 @@
         src: url("/HelveticaNeueMedium.woff") format('woff');
         }
 
+        .timerTime {
+            font-family: D7MBI;
+            font-size: 20vw;
+        }
+
+        .timerBox {
+            margin-top: 1rem;
+            margin: auto;
+        }
+
     </style>
 </head>
-<body>
-    <h1>Bomb Admin</h1>
-    <input type="button" value="Start" onclick="startTimers()">
-    <input type="button" value="Reset" onclick="resetGame()">
+<body onload="start()">
+    <div id="contentBox" style="margin: auto;">
+        <h1 style="margin: auto; text-align: center; font-family: PNSB;">Bomb Admin</h1>
+        <div style="display: flex; flex-direction: row; width: 90%; margin: auto; justify-content: space-around;">
+            <input style="width: 35%; aspect-ratio: 3; font-size: 3rem;" type="button" value="Start" onclick="startTimers()">
+            <input style="width: 35%; aspect-ratio: 3; font-size: 3rem;" type="button" value="Reset" onclick="resetGame()">
+        </div>
+        
+        <div id="timers" style="margin: auto; display: flex; flex-direction: column;"></div>
+    </div>
 </body>
 </html>

@@ -17,7 +17,7 @@ const codes = [
 var gameStarted = false;
 var timerTime = 20; // In seconds
 
-class Team {
+class Station {
     constructor(code) {
         this.timerLength = timerTime;
         this.status = 'stopped';
@@ -29,20 +29,20 @@ class Team {
         clearInterval(this.timeout);
         this.timeout = setInterval(() => {
             this.status = 'lost';
-            this.timerTime = 0;
-        }, this.timerTime)
+            this.timerLength = 0;
+        }, this.timerLength * 1000)
     }
 }
 
-var teams = {
-    1: new Team(1018),
-    2: new Team(9730),
-    3: new Team(1694),
-    4: new Team(8335),
-    5: new Team(2018),
-    6: new Team(3406),
-    7: new Team(1654),
-    8: new Team(9420)
+var stations = {
+    1: new Station(1018),
+    2: new Station(9730),
+    3: new Station(1694),
+    4: new Station(8335),
+    5: new Station(2018),
+    6: new Station(3406),
+    7: new Station(1654),
+    8: new Station(9420)
 };
 
 var getSecondsSinceStart = () => {
@@ -102,17 +102,17 @@ const server = http.createServer(async (request, response) => {
             } else if (obj.command === "startTimers") {
                 if (!gameStarted)
                 {
-                    for (let x in teams) {
-                        teams[x].timerStartTime = getSecondsSinceStart();
-                        teams[x].timerTime = timerLength;
-                        teams[x].status = 'ticking';
-                        teams[x].setLoseTimer();
+                    for (let x in stations) {
+                        stations[x].timerStartTime = getSecondsSinceStart();
+                        stations[x].timerLength = timerTime;
+                        stations[x].status = 'ticking';
+                        stations[x].setLoseTimer();
                     }
-
+                    gameStarted = true;
                     setTimeout(() => {
-                        for (let x in teams) {
-                            if (teams[x].status !== 'lost') {
-                                teams[x].status = 'stopped';
+                        for (let x in stations) {
+                            if (stations[x].status !== 'lost') {
+                                stations[x].status = 'stopped';
                             }
                         }
                     }, 60 * 60 * 1000)
@@ -120,28 +120,29 @@ const server = http.createServer(async (request, response) => {
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
             } else if (obj.command === "resetGame") {
-                teams = {
-                    1: new Team(1018),
-                    2: new Team(9730),
-                    3: new Team(1694),
-                    4: new Team(8335),
-                    5: new Team(2018),
-                    6: new Team(3406),
-                    7: new Team(1654),
-                    8: new Team(9420)
+                stations = {
+                    1: new Station(1018),
+                    2: new Station(9730),
+                    3: new Station(1694),
+                    4: new Station(8335),
+                    5: new Station(2018),
+                    6: new Station(3406),
+                    7: new Station(1654),
+                    8: new Station(9420)
                 };
+                gameStarted = false;
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
             } else if (obj.command === "getStatus") {
                 let sadfub;
-                if (teams[obj.station].status === 'ticking')
-                    sadfub = timerTime - (getSecondsSinceStart() - timerStartTime)  
+                if (stations[obj.station].status === 'ticking')
+                    sadfub = stations[obj.station].timerLength - (getSecondsSinceStart() - stations[obj.station].timerStartTime)  
                 else
-                    sadfub = timerTime;
+                    sadfub = stations[obj.station].timerLength;
 
                 let uss = {
                     time: sadfub,
-                    status: teams[obj.station].status
+                    status: stations[obj.station].status
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end(JSON.stringify(uss));
@@ -152,13 +153,15 @@ const server = http.createServer(async (request, response) => {
                     return;
                 }
 
-                if (obj.code === teams[obj.station].code) {
-                    if (teams[obj.station].status === 'ticking'){
-                        teams[obj.station].timerTime = teams[obj.station].timerTime - (getSecondsSinceStart() - teams[obj.station].timerStartTime);
-                        teams[obj.station].status = 'stopped';
-                    } else if (teams[obj.station].status === 'stopped') {
-                        teams[obj.station].timerStartTime = getSecondsSinceStart();
-                        teams[obj.station].status = 'ticking';
+                if (obj.code === stations[obj.station].code) {
+                    if (stations[obj.station].status === 'ticking'){
+                        stations[obj.station].timerLength = stations[obj.station].timerLength - (getSecondsSinceStart() - stations[obj.station].timerStartTime);
+                        stations[obj.station].status = 'stopped';
+                        clearInterval(stations[obj.station].timeout);
+                    } else if (stations[obj.station].status === 'stopped') {
+                        stations[obj.station].timerStartTime = getSecondsSinceStart();
+                        stations[obj.station].status = 'ticking';
+                        stations[obj.station].setLoseTimer();
                     }
                     response.setHeader('Content-Type', 'text/html');
                     response.end("Success!");
@@ -166,6 +169,23 @@ const server = http.createServer(async (request, response) => {
                     response.end("Womp womp!");
                 }
                 
+            } else if (obj.command === "getAllTimers") {
+                let stati = [];
+                for (let i in stations)
+                {
+                    let sadfub;
+                    if (stations[i].status === 'ticking')
+                        sadfub = stations[i].timerLength - (getSecondsSinceStart() - stations[i].timerStartTime)  
+                    else
+                        sadfub = stations[i].timerLength;
+
+                    stati.push({
+                        time: sadfub,
+                        status: stations[i].status
+                    });
+                }
+                response.setHeader('Content-Type', 'text/html');
+                response.end(JSON.stringify(stati));
             }
         })
     }

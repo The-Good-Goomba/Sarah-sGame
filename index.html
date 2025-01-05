@@ -57,7 +57,7 @@
         }
 
         .menuButton {
-            width: 80vw;
+            width: 60vw;
             font-size: 2rem;
             margin: auto;
             margin-top: 30px;
@@ -66,12 +66,13 @@
         #buttons {
             display: flex;
             flex-direction: column;
+            margin-top: 10rem;
         }
 
         #stationNumber {
             font-family: D7MI;
-            width: 100%;
-            font-size: 4rem;
+            width: 10rem;
+            font-size: 10rem;
             margin: auto;
         }
 
@@ -79,10 +80,7 @@
 </head>
 <body>
     <div id="buttons">
-        <div style="width: fit-content;">
-            <input id="stationNumber" type="text">
-            <div style="font-size: 4rem; font-family: D7MI; width: fit-content;" hidden>0</div>
-        </div>
+        <input id="stationNumber" type="text">
         <input class="menuButton" type="button" value="Enter Station" onclick="joinTeam()">
     </div>
 </body>
