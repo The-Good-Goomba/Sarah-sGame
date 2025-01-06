@@ -17,6 +17,7 @@ const codes = [
 var gameStarted = false;
 var timerTime = 15 * 60; // In seconds
 var gameEnd;
+var gameEnded = false;
 
 class Station {
     constructor(code) {
@@ -111,12 +112,15 @@ const server = http.createServer(async (request, response) => {
                     }
                     gameStarted = true;
                     gameEnd = setTimeout(() => {
+                        gameEnded = true;
                         for (let x in stations) {
                             if (stations[x].status !== 'lost') {
+                                stations[x].timerLength = stations[x].timerLength - (getSecondsSinceStart() - stations[x].timerStartTime);
                                 stations[x].status = 'stopped';
+                                clearInterval(stations[x].timeout);
                             }
                         }
-                    }, 60 * 60 * 1000)
+                    }, 20 * 1000)
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
@@ -132,6 +136,7 @@ const server = http.createServer(async (request, response) => {
                     8: new Station(9420)
                 };
                 gameStarted = false;
+                gameEnded = false;
                 clearTimeout(gameEnd);
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
@@ -152,6 +157,12 @@ const server = http.createServer(async (request, response) => {
                 if (!gameStarted) {
                     response.setHeader('Content-Type', 'text/html');
                     response.end("The game has not started");
+                    return;
+                }
+
+                if(gameEnded) {
+                    response.setHeader('Content-Type', 'text/html');
+                    response.end("The game has ended");
                     return;
                 }
 
