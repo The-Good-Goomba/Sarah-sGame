@@ -120,7 +120,7 @@ const server = http.createServer(async (request, response) => {
                                 clearInterval(stations[x].timeout);
                             }
                         }
-                    }, 60 * 60 * 1000)
+                    }, 30 * 60 * 1000)
                 }
                 response.setHeader('Content-Type', 'text/html');
                 response.end("Ok!");
